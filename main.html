@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ချစ်ရသောရေ...</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap');
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: url('https://source.unsplash.com/1920x1080/?galaxy,stars,space')
+          no-repeat center center/cover;
+        font-family: 'Dancing Script', cursive;
+      }
+
+      /* Love Letter Styles */
+      .letter-container {
+        width: 60%;
+        max-height: 50vh; /* Allow scrolling */
+        overflow-y: auto; /* Enables scrolling */
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 22px;
+        text-shadow: 2px 2px 13px white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 10px solid pink;
+        box-shadow: 0px 0px 15px rgba(255, 0, 100, 0.5);
+        background-image: url('https://t4.ftcdn.net/jpg/06/24/71/31/360_F_624713131_UF2AIZ8XUpSo4HP6LX3fyrbgwKv6oy99.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        z-index: 10; /* Ensures it stays on top */
+      }
+      /* Dancing Pandas */
+      .panda {
+        position: absolute;
+        width: 80px;
+        height: 80px;
+        bottom: 10px;
+        animation: dance 1s infinite alternate;
+      }
+
+      .panda:nth-child(odd) {
+        left: 10%;
+      }
+
+      .panda:nth-child(even) {
+        right: 10%;
+      }
+
+      @keyframes dance {
+        0% {
+          transform: rotate(-10deg);
+        }
+        100% {
+          transform: rotate(10deg);
+        }
+      }
+
+      /* Floating Elements */
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1; /* Keeps animations behind the letter */
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="animationCanvas"></canvas>
+
+    <div class="letter-container">
+      <h2>Stupid Cupid ရဲ့ မြှားလေးတစ်စင်း</h2>
+      <p>
+        မကို အရမ်းချစ်တယ်ဆိုတာ ဒီစာလေးနဲ့ပြောပြပါရစေနော်။<br />
+        မောင်စောင့်နေရင်းနဲ့ အတွေးထဲမှာကြိတ်ပျော်နေခဲ့တာ...<br />
+        မရယ် ... 💕။<br />
+        မကို အရမ်းချစ်တယ်ဆိုတာ ဒီစာလေးနဲ့ပြောပြပါရစေနော်။<br />
+        မောင်စောင့်နေရင်းနဲ့ အတွေးထဲမှာကြိတ်ပျော်နေခဲ့တာ...<br />
+        မရယ် ... 💕။
+      </p>
+    </div>
+    <img src="./sakura.png" class="panda" />
+    <img src="./flower.png" class="panda" />
+    <script>
+      const canvas = document.getElementById('animationCanvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const hearts = [];
+      const stars = [];
+      const shootingStars = [];
+
+      class Heart {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = canvas.height + Math.random() * 100;
+          this.size = Math.random() * 20 + 10;
+          this.speed = Math.random() * 2 + 1;
+          this.opacity = Math.random() * 0.5 + 0.5;
+          this.twinkleSpeed = Math.random() * 0.02 + 0.01;
+        }
+
+        draw() {
+          ctx.globalAlpha = this.opacity;
+          ctx.fillStyle = 'pink';
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.bezierCurveTo(
+            this.x - this.size,
+            this.y - this.size,
+            this.x - this.size * 1.5,
+            this.y + this.size / 2,
+            this.x,
+            this.y + this.size
+          );
+          ctx.bezierCurveTo(
+            this.x + this.size * 1.5,
+            this.y + this.size / 2,
+            this.x + this.size,
+            this.y - this.size,
+            this.x,
+            this.y
+          );
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        update() {
+          this.y -= this.speed;
+          this.opacity += this.twinkleSpeed;
+          if (this.opacity >= 1 || this.opacity <= 0.3) this.twinkleSpeed *= -1;
+          if (this.y < -this.size) {
+            this.y = canvas.height + Math.random() * 100;
+            this.x = Math.random() * canvas.width;
+          }
+        }
+      }
+
+      class Star {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 2 + 1;
+          this.opacity = Math.random();
+          this.twinkleSpeed = Math.random() * 0.02 + 0.01;
+        }
+
+        draw() {
+          ctx.globalAlpha = this.opacity;
+          ctx.fillStyle = 'white';
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        update() {
+          this.opacity += this.twinkleSpeed;
+          if (this.opacity >= 1 || this.opacity <= 0.3) this.twinkleSpeed *= -1;
+        }
+      }
+
+      class ShootingStar {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = (Math.random() * canvas.height) / 2;
+          this.length = Math.random() * 100 + 50;
+          this.speed = Math.random() * 4 + 2;
+          this.opacity = Math.random() * 0.8 + 0.2;
+        }
+
+        draw() {
+          ctx.globalAlpha = this.opacity;
+          ctx.strokeStyle = 'white';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(this.x - this.length, this.y + this.length);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+
+        update() {
+          this.x += this.speed;
+          this.y += this.speed;
+          this.opacity -= 0.02;
+          if (this.opacity <= 0) {
+            this.x = Math.random() * canvas.width;
+            this.y = (Math.random() * canvas.height) / 2;
+            this.opacity = Math.random() * 0.8 + 0.2;
+          }
+        }
+      }
+
+      function createElements() {
+        for (let i = 0; i < 50; i++) hearts.push(new Heart());
+        for (let i = 0; i < 100; i++) stars.push(new Star());
+        for (let i = 0; i < 5; i++) shootingStars.push(new ShootingStar());
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        stars.forEach((star) => {
+          star.update();
+          star.draw();
+        });
+
+        hearts.forEach((heart) => {
+          heart.update();
+          heart.draw();
+        });
+
+        shootingStars.forEach((shootingStar) => {
+          shootingStar.update();
+          shootingStar.draw();
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      createElements();
+      animate();
+    </script>
+  </body>
+</html>
